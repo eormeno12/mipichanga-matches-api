@@ -9,8 +9,6 @@ import {
   IsPositive,
   IsString,
   IsUrl,
-  Matches,
-  MinDate,
   ValidateNested,
 } from 'class-validator';
 import { Field, FieldLocation, Team } from '../entities/matches.entity';
@@ -45,7 +43,6 @@ export class TeamDto {
   @ApiProperty({ description: 'Lineup of the team' })
   @IsNotEmpty()
   @IsString()
-  @Matches(/^\d(-\d)*$/)
   readonly lineup: string;
 }
 
@@ -98,7 +95,6 @@ export class CreateMatchDto {
   @ApiProperty({ description: 'The date of the match' })
   @IsNotEmpty()
   @IsDate()
-  @MinDate(new Date())
   readonly date: Date;
 
   @ApiProperty({ description: 'The field of the match' })

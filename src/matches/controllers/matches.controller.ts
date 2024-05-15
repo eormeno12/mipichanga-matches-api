@@ -22,7 +22,7 @@ import { PayloadToken } from 'src/auth/models/token.model';
 import { IAuthRequest } from 'types';
 
 @ApiTags('Matches')
-@Controller('Matches')
+@Controller('matches')
 export class MatchesController {
   constructor(private matchesService: MatchesService) {}
   // get match by id

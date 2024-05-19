@@ -100,6 +100,18 @@ export class CreateMatchDto {
   @ValidateNested()
   @Type(() => FieldMatchDto)
   readonly field: FieldMatchDto;
+
+  @ApiProperty({ description: 'Equipo local del partido' })
+  @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => TeamDto)
+  readonly home: TeamDto;
+
+  @ApiProperty({ description: 'Equipo visitante del partido' })
+  @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => TeamDto)
+  readonly away: TeamDto;
 }
 
 export class UpdateMatchDto extends PartialType(CreateMatchDto) {}

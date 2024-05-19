@@ -101,7 +101,7 @@ export class MatchesController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('/:matchId/players')
+  @Put('/:matchId/players')
   @ApiOperation({ summary: 'Agregar jugador al partido' })
   @ApiBearerAuth()
   @ApiParam({ name: 'matchId', description: 'ID del partido' })

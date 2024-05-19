@@ -11,23 +11,61 @@ import {
   IsUrl,
   ValidateNested,
 } from 'class-validator';
-import { Field, FieldLocation, Team } from '../entities/matches.entity';
+
+export class FieldLocationDto {
+  @ApiProperty({ description: 'El prefijo de la ubicación' })
+  @IsNotEmpty()
+  @IsString()
+  readonly prefix: string;
+
+  @ApiProperty({ description: 'La ciudad de la ubicación' })
+  @IsNotEmpty()
+  @IsString()
+  readonly city: string;
+
+  @ApiProperty({ description: 'El país de la ubicación' })
+  @IsNotEmpty()
+  @IsString()
+  readonly country: string;
+}
+
+export class FieldMatchDto {
+  @ApiProperty({ description: 'El ID de la cancha' })
+  @IsNotEmpty()
+  @IsMongoId()
+  readonly _id: string;
+
+  @ApiProperty({ description: 'El nombre de la cancha' })
+  @IsNotEmpty()
+  @IsString()
+  readonly name: string;
+
+  @ApiProperty({ description: 'La URL de la imagen de la cancha' })
+  @IsNotEmpty()
+  @IsUrl()
+  readonly imageUrl: string;
+
+  @ApiProperty({ description: 'La ubicación de la cancha' })
+  @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => FieldLocationDto)
+  readonly location: FieldLocationDto;
+}
 
 export type TeamType = 'home' | 'away';
-
 export class AddPlayerDto {
-  @ApiProperty({ description: 'Team of the player' })
+  @ApiProperty({ description: 'Equipo del jugador' })
   @IsNotEmpty()
   @IsString()
   @IsIn(['home', 'away'])
   readonly team: TeamType;
 
-  @ApiProperty({ description: 'Name of the player' })
+  @ApiProperty({ description: 'Nombre del jugador' })
   @IsNotEmpty()
   @IsString()
   readonly name: string;
 
-  @ApiProperty({ description: 'Position of the player' })
+  @ApiProperty({ description: 'Posición del jugador' })
   @IsNotEmpty()
   @IsNumber()
   @IsPositive()
@@ -35,85 +73,33 @@ export class AddPlayerDto {
 }
 
 export class TeamDto {
-  @ApiProperty({ description: 'Name of the team' })
+  @ApiProperty({ description: 'Nombre del equipo' })
   @IsNotEmpty()
   @IsString()
   readonly name: string;
 
-  @ApiProperty({ description: 'Lineup of the team' })
+  @ApiProperty({ description: 'Alineación del equipo' })
   @IsNotEmpty()
   @IsString()
   readonly lineup: string;
 }
 
-export class FieldLocationDto implements FieldLocation {
-  @ApiProperty({ description: 'The prefix of the location' })
-  @IsNotEmpty()
-  @IsString()
-  readonly prefix: string;
-
-  @ApiProperty({ description: 'The city of the location' })
-  @IsNotEmpty()
-  @IsString()
-  readonly city: string;
-
-  @ApiProperty({ description: 'The country of the location' })
-  @IsNotEmpty()
-  @IsString()
-  readonly country: string;
-}
-
-export class FieldDto {
-  @ApiProperty({ description: 'The id of the field' })
-  @IsNotEmpty()
-  @IsMongoId()
-  readonly _id: string;
-
-  @ApiProperty({ description: 'The name of the field' })
-  @IsNotEmpty()
-  @IsString()
-  readonly name: string;
-
-  @ApiProperty({ description: 'The image URL of the field' })
-  @IsNotEmpty()
-  @IsUrl()
-  readonly imageUrl: string;
-
-  @ApiProperty({ description: 'The location of the field' })
-  @IsNotEmpty()
-  @ValidateNested()
-  @Type(() => FieldLocationDto)
-  readonly location: FieldLocationDto;
-}
-
 export class CreateMatchDto {
-  @ApiProperty({ description: 'The name of the match' })
+  @ApiProperty({ description: 'Nombre del partido' })
   @IsNotEmpty()
   @IsString()
   readonly name: string;
 
-  @ApiProperty({ description: 'The date of the match' })
+  @ApiProperty({ description: 'Fecha del partido' })
   @IsNotEmpty()
   @IsDate()
   readonly date: Date;
 
-  @ApiProperty({ description: 'The field of the match' })
+  @ApiProperty({ description: 'Cancha del partido' })
   @IsNotEmpty()
   @ValidateNested()
-  @Type(() => FieldDto)
-  readonly field: Field;
-
-  @ApiProperty({ description: 'The home team of the match' })
-  @IsNotEmpty()
-  @ValidateNested()
-  @Type(() => TeamDto)
-  readonly home: Team;
-
-  @ApiProperty({ description: 'The away team of the match' })
-  @IsNotEmpty()
-  @ValidateNested()
-  @Type(() => TeamDto)
-  readonly away: Team;
+  @Type(() => FieldMatchDto)
+  readonly field: FieldMatchDto;
 }
 
 export class UpdateMatchDto extends PartialType(CreateMatchDto) {}

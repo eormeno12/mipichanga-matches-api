@@ -20,7 +20,6 @@ export class MatchesService {
     return this.matchModel.find(
       {},
       {
-        createdAt: 0,
         updatedAt: 0,
         __v: 0,
       },
@@ -34,7 +33,6 @@ export class MatchesService {
       },
       {
         __v: 0,
-        createdAt: 0,
         updatedAt: 0,
       },
     );

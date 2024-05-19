@@ -9,68 +9,106 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { PayloadToken } from 'src/auth/models/token.model';
 import { MongoIdPipe } from 'src/pipes/mongoId/mongoId.pipe';
+import { IAuthRequest } from 'types';
 import {
   AddPlayerDto,
   CreateMatchDto,
   UpdateMatchDto,
 } from '../dtos/matches.dtos';
 import { MatchesService } from '../services/matches.service';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { PayloadToken } from 'src/auth/models/token.model';
-import { IAuthRequest } from 'types';
 
-@ApiTags('Matches')
+@ApiTags('matches')
 @Controller('matches')
 export class MatchesController {
   constructor(private matchesService: MatchesService) {}
-  // get match by id
+
+  @Get('/')
+  @ApiOperation({ summary: 'Obtener todos los partidos' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de partidos obtenida exitosamente.',
+  })
+  @ApiResponse({ status: 400, description: 'Solicitud incorrecta.' })
+  getAllMatches() {
+    return this.matchesService.findAll();
+  }
+
   @Get('/:matchId')
-  @ApiOperation({ summary: 'Get match by id' })
-  getFieldById(@Param('matchId', MongoIdPipe) matchId: string) {
+  @ApiOperation({ summary: 'Obtener partido por ID' })
+  @ApiParam({ name: 'matchId', description: 'ID del partido' })
+  @ApiResponse({ status: 200, description: 'Partido obtenido exitosamente.' })
+  @ApiResponse({ status: 400, description: 'Solicitud incorrecta.' })
+  getMatchById(@Param('matchId', MongoIdPipe) matchId: string) {
     return this.matchesService.findOne(matchId);
   }
 
-  // create match
   @UseGuards(JwtAuthGuard)
   @Post('/')
-  @ApiOperation({ summary: 'Create match' })
-  createField(@Req() request: IAuthRequest, @Body() payload: CreateMatchDto) {
+  @ApiOperation({ summary: 'Crear partido' })
+  @ApiBearerAuth()
+  @ApiBody({ type: CreateMatchDto })
+  @ApiResponse({ status: 201, description: 'Partido creado exitosamente.' })
+  @ApiResponse({ status: 400, description: 'Solicitud incorrecta.' })
+  createMatch(@Req() request: IAuthRequest, @Body() payload: CreateMatchDto) {
     const { sub } = request.user as PayloadToken;
     return this.matchesService.create(sub, payload);
   }
 
-  // update match
   @UseGuards(JwtAuthGuard)
   @Put('/:matchId')
-  @ApiOperation({ summary: 'Update match' })
-  updateField(
-    @Req() request: IAuthRequest,
+  @ApiOperation({ summary: 'Actualizar partido' })
+  @ApiBearerAuth()
+  @ApiParam({ name: 'matchId', description: 'ID del partido' })
+  @ApiBody({ type: UpdateMatchDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Partido actualizado exitosamente.',
+  })
+  @ApiResponse({ status: 400, description: 'Solicitud incorrecta.' })
+  updateMatch(
     @Param('matchId', MongoIdPipe) matchId: string,
     @Body() payload: UpdateMatchDto,
+    @Req() request: IAuthRequest,
   ) {
     const { sub } = request.user as PayloadToken;
     return this.matchesService.update(sub, matchId, payload);
   }
 
-  // delete match
   @UseGuards(JwtAuthGuard)
   @Delete('/:matchId')
-  @ApiOperation({ summary: 'Delete match' })
-  deleteField(
-    @Req() request: IAuthRequest,
+  @ApiOperation({ summary: 'Eliminar partido' })
+  @ApiBearerAuth()
+  @ApiParam({ name: 'matchId', description: 'ID del partido' })
+  @ApiResponse({ status: 200, description: 'Partido eliminado exitosamente.' })
+  @ApiResponse({ status: 400, description: 'Solicitud incorrecta.' })
+  deleteMatch(
     @Param('matchId', MongoIdPipe) matchId: string,
+    @Req() request: IAuthRequest,
   ) {
     const { sub } = request.user as PayloadToken;
     return this.matchesService.delete(sub, matchId);
   }
 
-  // add player to match
   @UseGuards(JwtAuthGuard)
-  @Put('/:matchId/players')
-  @ApiOperation({ summary: 'Add player to match' })
-  addPlayerToField(
+  @Post('/:matchId/players')
+  @ApiOperation({ summary: 'Agregar jugador al partido' })
+  @ApiBearerAuth()
+  @ApiParam({ name: 'matchId', description: 'ID del partido' })
+  @ApiBody({ type: AddPlayerDto })
+  @ApiResponse({ status: 201, description: 'Jugador agregado exitosamente.' })
+  @ApiResponse({ status: 400, description: 'Solicitud incorrecta.' })
+  addPlayerToMatch(
     @Req() request: IAuthRequest,
     @Param('matchId', MongoIdPipe) matchId: string,
     @Body() payload: AddPlayerDto,
@@ -83,11 +121,14 @@ export class MatchesController {
     });
   }
 
-  // remove player from match
   @UseGuards(JwtAuthGuard)
   @Delete('/:matchId/players')
-  @ApiOperation({ summary: 'Remove player from match' })
-  removePlayerFromField(
+  @ApiOperation({ summary: 'Eliminar jugador del partido' })
+  @ApiBearerAuth()
+  @ApiParam({ name: 'matchId', description: 'ID del partido' })
+  @ApiResponse({ status: 200, description: 'Jugador eliminado exitosamente.' })
+  @ApiResponse({ status: 400, description: 'Solicitud incorrecta.' })
+  removePlayerFromMatch(
     @Req() request: IAuthRequest,
     @Param('matchId', MongoIdPipe) matchId: string,
   ) {

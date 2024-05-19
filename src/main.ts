@@ -19,9 +19,11 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('MiPichanga (Matches) - API')
     .setDescription(
-      'Documentación del microservicio MiPichanga (Matches) - API',
+      'API para la gestión de partidos en MiPichanga. Permite crear, actualizar y eliminar partidos, así como gestionar jugadores en cada partido.',
     )
     .setVersion('1.0')
+    .addBearerAuth()
+    .addTag('matches', 'Endpoints relacionados con la gestión de partidos')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

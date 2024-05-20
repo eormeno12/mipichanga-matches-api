@@ -26,8 +26,8 @@ ENV JWT_SECRET=64f6982a914f8eba6754376a303cc0ee3129a9b308b71e1a47a2631cbde2539b
 ENV JWT_EXPIRES_IN=1d
 
 ENV PORT=3003
-ENV FRONTEND_URL='http://host.docker.internal'
-ENV FRONTEND_DOMAIN=host.docker.internal
+ENV FRONTEND_URL='http://lb-mipichangaprod-1914691084.us-east-1.elb.amazonaws.com'
+ENV FRONTEND_DOMAIN=lb-mipichangaprod-1914691084.us-east-1.elb.amazonaws.com
 
 # Expose the port that the application will run on
 EXPOSE 3003

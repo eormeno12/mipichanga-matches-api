@@ -26,7 +26,7 @@ ENV JWT_SECRET=64f6982a914f8eba6754376a303cc0ee3129a9b308b71e1a47a2631cbde2539b
 ENV JWT_EXPIRES_IN=1d
 
 ENV PORT=3003
-ENV FRONTEND_URL='http://localhost'
+ENV FRONTEND_URL='http://matches-api:3003'
 ENV FRONTEND_DOMAIN=localhost
 
 # Expose the port that the application will run on
